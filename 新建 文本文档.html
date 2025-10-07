@@ -1,0 +1,2214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四天漫画</title>
+    <style>
+        /* 全局样式 - 黑白风格 */
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #333333;
+            --background-color: #ffffff;
+            --text-color: #000000;
+            --border-color: #cccccc;
+            --hover-color: #f5f5f5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* 通用组件样式 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: var(--background-color);
+            border: 1px solid var(--primary-color);
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--background-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+
+        /* 头部样式 */
+        header {
+            background-color: var(--background-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--background-color);
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        /* 主要内容区域 */
+        main {
+            padding: 40px 0;
+            min-height: calc(100vh - 140px);
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* 作品网格 */
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .work-card {
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .work-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .work-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .work-info {
+            padding: 15px;
+        }
+
+        .work-title {
+            font-size: 18px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .work-author {
+            font-size: 14px;
+            color: var(--secondary-color);
+        }
+
+        /* 详情页样式 */
+        .work-detail {
+            display: none;
+        }
+
+        .detail-header {
+            margin-bottom: 30px;
+        }
+
+        .detail-title {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .detail-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .detail-content {
+            margin-bottom: 30px;
+        }
+
+        .detail-media {
+            max-width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .detail-media img,
+        .detail-media video {
+            max-width: 100%;
+            max-height: 70vh;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .detail-description {
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--hover-color);
+        }
+
+        .action-btn.active {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+
+        .comments-section {
+            margin-top: 40px;
+        }
+
+        .comment-form {
+            margin-bottom: 30px;
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .comment-item {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .comment-content {
+            font-size: 14px;
+        }
+
+        .comment-date {
+            font-size: 12px;
+            color: var(--secondary-color);
+            margin-top: 5px;
+        }
+
+        /* 管理员操作台 */
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .admin-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .admin-tab.active {
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .admin-table th {
+            font-weight: bold;
+            background-color: var(--hover-color);
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .empty-state p {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        /* 页脚 */
+        footer {
+            background-color: var(--background-color);
+            border-top: 1px solid var(--border-color);
+            padding: 20px 0;
+            text-align: center;
+            font-size: 14px;
+            color: var(--secondary-color);
+        }
+
+        /* 个人中心特有样式 */
+        .work-meta {
+            font-size: 12px;
+            color: var(--secondary-color);
+            margin-top: 5px;
+        }
+        
+        .work-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        #profile-modal .admin-tabs {
+            margin-bottom: 20px;
+        }
+        
+        #profile-modal .admin-content {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--background-color);
+                padding: 20px;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .works-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .detail-actions {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">四天漫画</div>
+            <nav class="nav-links">
+                <a href="#" id="home-link">首页</a>
+                <a href="#" id="upload-link" style="display: none;">上传作品</a>
+                <a href="#" id="admin-link" style="display: none;">管理后台</a>
+                <a href="#" id="login-link">登录/注册</a>
+                <a href="#" id="profile-link" style="display: none;">个人中心</a>
+                <a href="#" id="logout-link" style="display: none;">退出登录</a>
+            </nav>
+            <button class="mobile-menu-btn">☰</button>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main class="container">
+        <!-- 作品列表 -->
+        <section id="works-list">
+            <h2 class="section-title">热门作品</h2>
+            <div class="works-grid" id="works-grid">
+                <!-- 作品卡片将通过JavaScript动态生成 -->
+            </div>
+            <div class="empty-state" id="empty-works" style="display: none;">
+                <p>暂无作品，赶快上传第一个作品吧！</p>
+                <button class="btn" id="upload-empty-btn">上传作品</button>
+            </div>
+        </section>
+
+        <!-- 作品详情 -->
+        <section id="work-detail" class="work-detail">
+            <div class="detail-header">
+                <h1 class="detail-title" id="detail-title">作品标题</h1>
+                <div class="detail-meta">
+                    <span id="detail-author">作者</span>
+                    <span id="detail-date">上传时间</span>
+                </div>
+            </div>
+            <div class="detail-content">
+                <div class="detail-media" id="detail-media">
+                    <!-- 图片或视频将动态加载 -->
+                </div>
+                <div class="detail-description" id="detail-description">
+                    作品描述
+                </div>
+            </div>
+            <div class="detail-actions">
+                <button class="action-btn" id="like-btn">
+                    <span>❤️</span> <span id="like-count">0</span>
+                </button>
+                <button class="action-btn" id="favorite-btn">
+                    <span>⭐</span> <span id="favorite-count">0</span>
+                </button>
+                <button class="action-btn" id="share-btn">
+                    <span>↗️</span> 分享
+                </button>
+            </div>
+            <div class="comments-section">
+                <h3>评论</h3>
+                <div class="comment-form">
+                    <textarea id="comment-input" placeholder="写下你的评论..." rows="3"></textarea>
+                    <button class="btn" id="submit-comment">提交评论</button>
+                </div>
+                <div class="comment-list" id="comment-list">
+                    <!-- 评论将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            <button class="btn" id="back-to-list">返回作品列表</button>
+        </section>
+
+        <!-- 管理员操作台 -->
+        <section id="admin-panel" class="admin-panel">
+            <h2 class="section-title">管理后台</h2>
+            <div class="admin-tabs">
+                <div class="admin-tab active" data-tab="works">作品管理</div>
+                <div class="admin-tab" data-tab="users">用户管理</div>
+                <div class="admin-tab" data-tab="reports">举报管理</div>
+                <div class="admin-tab" data-tab="analytics">数据统计</div>
+            </div>
+            <div class="admin-content active" id="works-tab">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>标题</th>
+                            <th>作者</th>
+                            <th>上传时间</th>
+                            <th>点赞数</th>
+                            <th>收藏数</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-works-table">
+                        <!-- 作品管理表格将通过JavaScript动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="admin-content" id="users-tab">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>用户名</th>
+                            <th>注册时间</th>
+                            <th>作品数</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-users-table">
+                        <!-- 用户管理表格将通过JavaScript动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="admin-content" id="reports-tab">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>举报内容</th>
+                            <th>举报人</th>
+                            <th>举报时间</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-reports-table">
+                        <!-- 举报管理表格将通过JavaScript动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="admin-content" id="analytics-tab">
+                <h3>平台数据统计</h3>
+                <div id="analytics-content">
+                    <!-- 数据统计内容将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 模态框 -->
+    <!-- 登录模态框 -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>登录</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-username">用户名</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">密码</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn">登录</button>
+            </form>
+            <p>还没有账号？<a href="#" id="show-register">立即注册</a></p>
+        </div>
+    </div>
+
+    <!-- 注册模态框 -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>注册</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-username">用户名</label>
+                    <input type="text" id="register-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">密码</label>
+                    <input type="password" id="register-password" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm">确认密码</label>
+                    <input type="password" id="register-confirm" required>
+                </div>
+                <button type="submit" class="btn">注册</button>
+            </form>
+            <p>已有账号？<a href="#" id="show-login">立即登录</a></p>
+        </div>
+    </div>
+
+    <!-- 上传作品模态框 -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>上传作品</h2>
+            <form id="upload-form">
+                <div class="form-group">
+                    <label for="work-title">作品标题</label>
+                    <input type="text" id="work-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="work-description">作品描述</label>
+                    <textarea id="work-description" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="work-file">上传文件 (图片或视频)</label>
+                    <input type="file" id="work-file" accept="image/*,video/*" required>
+                </div>
+                <button type="submit" class="btn">上传</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 个人中心模态框 -->
+    <div id="profile-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close-modal">&times;</span>
+            <h2>个人中心</h2>
+            <div class="admin-tabs">
+                <div class="admin-tab active" data-tab="profile-info">个人信息</div>
+                <div class="admin-tab" data-tab="my-works">我的作品</div>
+                <div class="admin-tab" data-tab="my-likes">我的点赞</div>
+                <div class="admin-tab" data-tab="my-favorites">我的收藏</div>
+            </div>
+            
+            <!-- 个人信息 -->
+            <div class="admin-content active" id="profile-info-tab">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="profile-username" readonly>
+                </div>
+                <div class="form-group">
+                    <label>注册时间</label>
+                    <input type="text" id="profile-register-date" readonly>
+                </div>
+                <div class="form-group">
+                    <label>作品数量</label>
+                    <input type="text" id="profile-works-count" readonly>
+                </div>
+                <div class="form-group">
+                    <label>获赞总数</label>
+                    <input type="text" id="profile-likes-count" readonly>
+                </div>
+                <div class="form-group">
+                    <button class="btn" id="change-password-btn">修改密码</button>
+                </div>
+            </div>
+            
+            <!-- 我的作品 -->
+            <div class="admin-content" id="my-works-tab">
+                <div class="works-grid" id="my-works-grid">
+                    <!-- 用户作品将通过JavaScript动态生成 -->
+                </div>
+                <div class="empty-state" id="empty-my-works" style="display: none;">
+                    <p>您还没有上传任何作品</p>
+                    <button class="btn" id="upload-from-profile">上传作品</button>
+                </div>
+            </div>
+            
+            <!-- 我的点赞 -->
+            <div class="admin-content" id="my-likes-tab">
+                <div class="works-grid" id="my-likes-grid">
+                    <!-- 点赞作品将通过JavaScript动态生成 -->
+                </div>
+                <div class="empty-state" id="empty-my-likes" style="display: none;">
+                    <p>您还没有点赞任何作品</p>
+                </div>
+            </div>
+            
+            <!-- 我的收藏 -->
+            <div class="admin-content" id="my-favorites-tab">
+                <div class="works-grid" id="my-favorites-grid">
+                    <!-- 收藏作品将通过JavaScript动态生成 -->
+                </div>
+                <div class="empty-state" id="empty-my-favorites" style="display: none;">
+                    <p>您还没有收藏任何作品</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 修改密码模态框 -->
+    <div id="change-password-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>修改密码</h2>
+            <form id="change-password-form">
+                <div class="form-group">
+                    <label for="current-password">当前密码</label>
+                    <input type="password" id="current-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">新密码</label>
+                    <input type="password" id="new-password" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-new-password">确认新密码</label>
+                    <input type="password" id="confirm-new-password" required>
+                </div>
+                <button type="submit" class="btn">修改密码</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>© 2023 四天漫画 - 黑白风格漫画分享平台</p>
+        </div>
+    </footer>
+
+    <script>
+        // 数据存储和管理
+        class DataManager {
+            constructor() {
+                this.usersKey = 'fourDayComic_users';
+                this.worksKey = 'fourDayComic_works';
+                this.commentsKey = 'fourDayComic_comments';
+                this.reportsKey = 'fourDayComic_reports';
+                this.likesKey = 'fourDayComic_likes';
+                this.favoritesKey = 'fourDayComic_favorites';
+                this.currentUserKey = 'fourDayComic_currentUser';
+                
+                this.init();
+            }
+            
+            init() {
+                // 初始化数据，如果不存在则创建空数据
+                if (!this.getData(this.usersKey)) {
+                    this.setData(this.usersKey, []);
+                    // 创建默认管理员账户
+                    this.createUser('LKQ', '120123LKQ', true);
+                }
+                
+                if (!this.getData(this.worksKey)) {
+                    this.setData(this.worksKey, []);
+                }
+                
+                if (!this.getData(this.commentsKey)) {
+                    this.setData(this.commentsKey, []);
+                }
+                
+                if (!this.getData(this.reportsKey)) {
+                    this.setData(this.reportsKey, []);
+                }
+                
+                if (!this.getData(this.likesKey)) {
+                    this.setData(this.likesKey, {});
+                }
+                
+                if (!this.getData(this.favoritesKey)) {
+                    this.setData(this.favoritesKey, {});
+                }
+            }
+            
+            getData(key) {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : null;
+            }
+            
+            setData(key, data) {
+                localStorage.setItem(key, JSON.stringify(data));
+            }
+            
+            // 用户管理
+            createUser(username, password, isAdmin = false) {
+                const users = this.getData(this.usersKey);
+                // 检查用户名是否已存在
+                if (users.find(user => user.username === username)) {
+                    return { success: false, message: '用户名已存在' };
+                }
+                
+                const newUser = {
+                    id: this.generateId(),
+                    username,
+                    password, // 实际应用中应该加密存储
+                    isAdmin,
+                    createdAt: new Date().toISOString()
+                };
+                
+                users.push(newUser);
+                this.setData(this.usersKey, users);
+                
+                return { success: true, user: newUser };
+            }
+            
+            authenticateUser(username, password) {
+                const users = this.getData(this.usersKey);
+                const user = users.find(u => u.username === username && u.password === password);
+                
+                if (user) {
+                    this.setData(this.currentUserKey, user);
+                    return { success: true, user };
+                } else {
+                    return { success: false, message: '用户名或密码错误' };
+                }
+            }
+            
+            getCurrentUser() {
+                return this.getData(this.currentUserKey);
+            }
+            
+            logout() {
+                localStorage.removeItem(this.currentUserKey);
+            }
+            
+            // 作品管理
+            createWork(title, description, file, authorId) {
+                const works = this.getData(this.worksKey);
+                
+                // 将文件转换为Base64以便存储
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const newWork = {
+                            id: this.generateId(),
+                            title,
+                            description,
+                            fileData: reader.result,
+                            fileType: file.type.startsWith('image/') ? 'image' : 'video',
+                            authorId,
+                            createdAt: new Date().toISOString(),
+                            status: 'pending' // pending, approved, rejected
+                        };
+                        
+                        works.push(newWork);
+                        this.setData(this.worksKey, works);
+                        
+                        resolve({ success: true, work: newWork });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+            getWorks() {
+                return this.getData(this.worksKey).filter(work => work.status === 'approved');
+            }
+            
+            getAllWorks() {
+                return this.getData(this.worksKey);
+            }
+            
+            getWorkById(id) {
+                const works = this.getData(this.worksKey);
+                return works.find(work => work.id === id);
+            }
+            
+            updateWork(id, updates) {
+                const works = this.getData(this.worksKey);
+                const workIndex = works.findIndex(work => work.id === id);
+                
+                if (workIndex !== -1) {
+                    works[workIndex] = { ...works[workIndex], ...updates };
+                    this.setData(this.worksKey, works);
+                    return { success: true, work: works[workIndex] };
+                }
+                
+                return { success: false, message: '作品不存在' };
+            }
+            
+            deleteWork(id) {
+                const works = this.getData(this.worksKey);
+                const filteredWorks = works.filter(work => work.id !== id);
+                this.setData(this.worksKey, filteredWorks);
+                
+                // 同时删除相关的点赞、收藏和评论
+                this.deleteWorkInteractions(id);
+                
+                return { success: true };
+            }
+            
+            // 互动功能
+            toggleLike(workId, userId) {
+                const likes = this.getData(this.likesKey);
+                
+                if (!likes[workId]) {
+                    likes[workId] = [];
+                }
+                
+                const userIndex = likes[workId].indexOf(userId);
+                
+                if (userIndex === -1) {
+                    likes[workId].push(userId);
+                } else {
+                    likes[workId].splice(userIndex, 1);
+                }
+                
+                this.setData(this.likesKey, likes);
+                
+                return { success: true, likes: likes[workId] };
+            }
+            
+            toggleFavorite(workId, userId) {
+                const favorites = this.getData(this.favoritesKey);
+                
+                if (!favorites[workId]) {
+                    favorites[workId] = [];
+                }
+                
+                const userIndex = favorites[workId].indexOf(userId);
+                
+                if (userIndex === -1) {
+                    favorites[workId].push(userId);
+                } else {
+                    favorites[workId].splice(userIndex, 1);
+                }
+                
+                this.setData(this.favoritesKey, favorites);
+                
+                return { success: true, favorites: favorites[workId] };
+            }
+            
+            addComment(workId, userId, content) {
+                const comments = this.getData(this.commentsKey);
+                
+                const newComment = {
+                    id: this.generateId(),
+                    workId,
+                    userId,
+                    content,
+                    createdAt: new Date().toISOString()
+                };
+                
+                comments.push(newComment);
+                this.setData(this.commentsKey, comments);
+                
+                return { success: true, comment: newComment };
+            }
+            
+            getCommentsByWorkId(workId) {
+                const comments = this.getData(this.commentsKey);
+                return comments.filter(comment => comment.workId === workId);
+            }
+            
+            // 举报管理
+            addReport(workId, userId, reason) {
+                const reports = this.getData(this.reportsKey);
+                
+                const newReport = {
+                    id: this.generateId(),
+                    workId,
+                    userId,
+                    reason,
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                };
+                
+                reports.push(newReport);
+                this.setData(this.reportsKey, reports);
+                
+                return { success: true, report: newReport };
+            }
+            
+            getReports() {
+                return this.getData(this.reportsKey);
+            }
+            
+            updateReport(id, updates) {
+                const reports = this.getData(this.reportsKey);
+                const reportIndex = reports.findIndex(report => report.id === id);
+                
+                if (reportIndex !== -1) {
+                    reports[reportIndex] = { ...reports[reportIndex], ...updates };
+                    this.setData(this.reportsKey, reports);
+                    return { success: true, report: reports[reportIndex] };
+                }
+                
+                return { success: false, message: '举报不存在' };
+            }
+            
+            // 辅助方法
+            generateId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2);
+            }
+            
+            deleteWorkInteractions(workId) {
+                // 删除作品的点赞
+                const likes = this.getData(this.likesKey);
+                delete likes[workId];
+                this.setData(this.likesKey, likes);
+                
+                // 删除作品的收藏
+                const favorites = this.getData(this.favoritesKey);
+                delete favorites[workId];
+                this.setData(this.favoritesKey, favorites);
+                
+                // 删除作品的评论
+                const comments = this.getData(this.commentsKey);
+                const filteredComments = comments.filter(comment => comment.workId !== workId);
+                this.setData(this.commentsKey, filteredComments);
+            }
+            
+            // 用户管理
+            getUsers() {
+                return this.getData(this.usersKey);
+            }
+            
+            updateUser(id, updates) {
+                const users = this.getData(this.usersKey);
+                const userIndex = users.findIndex(user => user.id === id);
+                
+                if (userIndex !== -1) {
+                    users[userIndex] = { ...users[userIndex], ...updates };
+                    this.setData(this.usersKey, users);
+                    return { success: true, user: users[userIndex] };
+                }
+                
+                return { success: false, message: '用户不存在' };
+            }
+            
+            deleteUser(id) {
+                const users = this.getData(this.usersKey);
+                const filteredUsers = users.filter(user => user.id !== id);
+                this.setData(this.usersKey, filteredUsers);
+                
+                // 同时删除该用户的所有作品和互动
+                const works = this.getData(this.worksKey);
+                const userWorks = works.filter(work => work.authorId === id);
+                
+                userWorks.forEach(work => {
+                    this.deleteWork(work.id);
+                });
+                
+                return { success: true };
+            }
+        }
+
+        // 应用主类
+        class FourDayComicApp {
+            constructor() {
+                this.dataManager = new DataManager();
+                this.currentView = 'works-list';
+                this.currentWorkId = null;
+                
+                this.init();
+            }
+            
+            init() {
+                this.bindEvents();
+                this.checkLoginStatus();
+                this.renderWorksList();
+            }
+            
+            bindEvents() {
+                // 导航链接
+                document.getElementById('home-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showWorksList();
+                });
+                
+                document.getElementById('upload-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showUploadModal();
+                });
+                
+                document.getElementById('admin-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showAdminPanel();
+                });
+                
+                document.getElementById('login-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showLoginModal();
+                });
+                
+                document.getElementById('profile-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showProfileModal();
+                });
+                
+                document.getElementById('logout-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.logout();
+                });
+                
+                // 模态框控制
+                document.querySelectorAll('.close-modal').forEach(closeBtn => {
+                    closeBtn.addEventListener('click', () => {
+                        this.hideAllModals();
+                    });
+                });
+                
+                document.getElementById('show-register').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.hideAllModals();
+                    this.showRegisterModal();
+                });
+                
+                document.getElementById('show-login').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.hideAllModals();
+                    this.showLoginModal();
+                });
+                
+                // 表单提交
+                document.getElementById('login-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+                
+                document.getElementById('register-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleRegister();
+                });
+                
+                document.getElementById('upload-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleUpload();
+                });
+                
+                // 作品交互
+                document.getElementById('back-to-list').addEventListener('click', () => {
+                    this.showWorksList();
+                });
+                
+                document.getElementById('like-btn').addEventListener('click', () => {
+                    this.handleLike();
+                });
+                
+                document.getElementById('favorite-btn').addEventListener('click', () => {
+                    this.handleFavorite();
+                });
+                
+                document.getElementById('submit-comment').addEventListener('click', () => {
+                    this.handleComment();
+                });
+                
+                // 空状态上传按钮
+                document.getElementById('upload-empty-btn').addEventListener('click', () => {
+                    this.showUploadModal();
+                });
+                
+                // 移动端菜单
+                document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+                    document.querySelector('.nav-links').classList.toggle('active');
+                });
+                
+                // 管理员标签切换
+                document.querySelectorAll('.admin-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        this.switchAdminTab(tab.dataset.tab);
+                    });
+                });
+                
+                // 个人中心相关事件
+                document.getElementById('upload-from-profile').addEventListener('click', () => {
+                    this.hideAllModals();
+                    this.showUploadModal();
+                });
+                
+                document.getElementById('change-password-btn').addEventListener('click', () => {
+                    this.hideAllModals();
+                    this.showChangePasswordModal();
+                });
+                
+                document.getElementById('change-password-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleChangePassword();
+                });
+                
+                // 个人中心标签切换
+                document.querySelectorAll('#profile-modal .admin-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        this.switchProfileTab(tab.dataset.tab);
+                    });
+                });
+            }
+            
+            checkLoginStatus() {
+                const currentUser = this.dataManager.getCurrentUser();
+                
+                if (currentUser) {
+                    this.updateUIForLoggedInUser(currentUser);
+                } else {
+                    this.updateUIForGuest();
+                }
+            }
+            
+            updateUIForLoggedInUser(user) {
+                document.getElementById('login-link').style.display = 'none';
+                document.getElementById('profile-link').style.display = 'block';
+                document.getElementById('logout-link').style.display = 'block';
+                document.getElementById('upload-link').style.display = 'block';
+                
+                if (user.isAdmin) {
+                    document.getElementById('admin-link').style.display = 'block';
+                } else {
+                    document.getElementById('admin-link').style.display = 'none';
+                }
+            }
+            
+            updateUIForGuest() {
+                document.getElementById('login-link').style.display = 'block';
+                document.getElementById('profile-link').style.display = 'none';
+                document.getElementById('logout-link').style.display = 'none';
+                document.getElementById('upload-link').style.display = 'none';
+                document.getElementById('admin-link').style.display = 'none';
+            }
+            
+            showWorksList() {
+                document.getElementById('works-list').style.display = 'block';
+                document.getElementById('work-detail').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'none';
+                this.currentView = 'works-list';
+                
+                this.renderWorksList();
+            }
+            
+            showWorkDetail(workId) {
+                document.getElementById('works-list').style.display = 'none';
+                document.getElementById('work-detail').style.display = 'block';
+                document.getElementById('admin-panel').style.display = 'none';
+                this.currentView = 'work-detail';
+                this.currentWorkId = workId;
+                
+                this.renderWorkDetail(workId);
+            }
+            
+            showAdminPanel() {
+                document.getElementById('works-list').style.display = 'none';
+                document.getElementById('work-detail').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                this.currentView = 'admin-panel';
+                
+                this.renderAdminPanel();
+            }
+            
+            showLoginModal() {
+                this.hideAllModals();
+                document.getElementById('login-modal').style.display = 'flex';
+            }
+            
+            showRegisterModal() {
+                this.hideAllModals();
+                document.getElementById('register-modal').style.display = 'flex';
+            }
+            
+            showUploadModal() {
+                this.hideAllModals();
+                document.getElementById('upload-modal').style.display = 'flex';
+            }
+            
+            showProfileModal() {
+                const currentUser = this.dataManager.getCurrentUser();
+                if (!currentUser) {
+                    alert('请先登录！');
+                    this.showLoginModal();
+                    return;
+                }
+                
+                this.hideAllModals();
+                document.getElementById('profile-modal').style.display = 'flex';
+                this.renderProfileInfo();
+            }
+            
+            showChangePasswordModal() {
+                this.hideAllModals();
+                document.getElementById('change-password-modal').style.display = 'flex';
+            }
+            
+            hideAllModals() {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+            
+            // 渲染方法
+            renderWorksList() {
+                const worksGrid = document.getElementById('works-grid');
+                const emptyWorks = document.getElementById('empty-works');
+                const works = this.dataManager.getWorks();
+                
+                if (works.length === 0) {
+                    worksGrid.style.display = 'none';
+                    emptyWorks.style.display = 'block';
+                    return;
+                }
+                
+                worksGrid.style.display = 'grid';
+                emptyWorks.style.display = 'none';
+                
+                worksGrid.innerHTML = '';
+                
+                works.forEach(work => {
+                    const workCard = document.createElement('div');
+                    workCard.className = 'work-card';
+                    workCard.addEventListener('click', () => {
+                        this.showWorkDetail(work.id);
+                    });
+                    
+                    const workImage = document.createElement('img');
+                    workImage.className = 'work-image';
+                    workImage.src = work.fileData;
+                    workImage.alt = work.title;
+                    
+                    const workInfo = document.createElement('div');
+                    workInfo.className = 'work-info';
+                    
+                    const workTitle = document.createElement('h3');
+                    workTitle.className = 'work-title';
+                    workTitle.textContent = work.title;
+                    
+                    const workAuthor = document.createElement('p');
+                    workAuthor.className = 'work-author';
+                    workAuthor.textContent = this.getUsernameById(work.authorId);
+                    
+                    workInfo.appendChild(workTitle);
+                    workInfo.appendChild(workAuthor);
+                    
+                    workCard.appendChild(workImage);
+                    workCard.appendChild(workInfo);
+                    
+                    worksGrid.appendChild(workCard);
+                });
+            }
+            
+            renderWorkDetail(workId) {
+                const work = this.dataManager.getWorkById(workId);
+                if (!work) return;
+                
+                document.getElementById('detail-title').textContent = work.title;
+                document.getElementById('detail-author').textContent = this.getUsernameById(work.authorId);
+                document.getElementById('detail-date').textContent = new Date(work.createdAt).toLocaleDateString();
+                document.getElementById('detail-description').textContent = work.description;
+                
+                const mediaContainer = document.getElementById('detail-media');
+                mediaContainer.innerHTML = '';
+                
+                if (work.fileType === 'image') {
+                    const img = document.createElement('img');
+                    img.src = work.fileData;
+                    img.alt = work.title;
+                    mediaContainer.appendChild(img);
+                } else {
+                    const video = document.createElement('video');
+                    video.src = work.fileData;
+                    video.controls = true;
+                    mediaContainer.appendChild(video);
+                }
+                
+                // 更新点赞和收藏状态
+                this.updateInteractionCounts(workId);
+                
+                // 渲染评论
+                this.renderComments(workId);
+            }
+            
+            updateInteractionCounts(workId) {
+                const likes = this.dataManager.getData(this.dataManager.likesKey)[workId] || [];
+                const favorites = this.dataManager.getData(this.dataManager.favoritesKey)[workId] || [];
+                
+                document.getElementById('like-count').textContent = likes.length;
+                document.getElementById('favorite-count').textContent = favorites.length;
+                
+                const currentUser = this.dataManager.getCurrentUser();
+                if (currentUser) {
+                    const likeBtn = document.getElementById('like-btn');
+                    const favoriteBtn = document.getElementById('favorite-btn');
+                    
+                    if (likes.includes(currentUser.id)) {
+                        likeBtn.classList.add('active');
+                    } else {
+                        likeBtn.classList.remove('active');
+                    }
+                    
+                    if (favorites.includes(currentUser.id)) {
+                        favoriteBtn.classList.add('active');
+                    } else {
+                        favoriteBtn.classList.remove('active');
+                    }
+                }
+            }
+            
+            renderComments(workId) {
+                const commentList = document.getElementById('comment-list');
+                const comments = this.dataManager.getCommentsByWorkId(workId);
+                
+                commentList.innerHTML = '';
+                
+                if (comments.length === 0) {
+                    const emptyComment = document.createElement('div');
+                    emptyComment.className = 'empty-state';
+                    emptyComment.innerHTML = '<p>暂无评论，快来发表第一条评论吧！</p>';
+                    commentList.appendChild(emptyComment);
+                    return;
+                }
+                
+                comments.forEach(comment => {
+                    const commentItem = document.createElement('div');
+                    commentItem.className = 'comment-item';
+                    
+                    const commentAuthor = document.createElement('div');
+                    commentAuthor.className = 'comment-author';
+                    commentAuthor.textContent = this.getUsernameById(comment.userId);
+                    
+                    const commentContent = document.createElement('div');
+                    commentContent.className = 'comment-content';
+                    commentContent.textContent = comment.content;
+                    
+                    const commentDate = document.createElement('div');
+                    commentDate.className = 'comment-date';
+                    commentDate.textContent = new Date(comment.createdAt).toLocaleString();
+                    
+                    commentItem.appendChild(commentAuthor);
+                    commentItem.appendChild(commentContent);
+                    commentItem.appendChild(commentDate);
+                    
+                    commentList.appendChild(commentItem);
+                });
+            }
+            
+            renderAdminPanel() {
+                this.renderWorksManagement();
+                this.renderUsersManagement();
+                this.renderReportsManagement();
+                this.renderAnalytics();
+            }
+            
+            renderWorksManagement() {
+                const tableBody = document.getElementById('admin-works-table');
+                const works = this.dataManager.getAllWorks();
+                
+                tableBody.innerHTML = '';
+                
+                works.forEach(work => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${work.id}</td>
+                        <td>${work.title}</td>
+                        <td>${this.getUsernameById(work.authorId)}</td>
+                        <td>${new Date(work.createdAt).toLocaleDateString()}</td>
+                        <td>${(this.dataManager.getData(this.dataManager.likesKey)[work.id] || []).length}</td>
+                        <td>${(this.dataManager.getData(this.dataManager.favoritesKey)[work.id] || []).length}</td>
+                        <td>${work.status}</td>
+                        <td class="admin-actions">
+                            <button class="btn btn-outline edit-work" data-id="${work.id}">编辑</button>
+                            <button class="btn btn-outline delete-work" data-id="${work.id}">删除</button>
+                            ${work.status === 'pending' ? `
+                                <button class="btn approve-work" data-id="${work.id}">审核通过</button>
+                                <button class="btn btn-outline reject-work" data-id="${work.id}">拒绝</button>
+                            ` : ''}
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                // 绑定操作事件
+                document.querySelectorAll('.edit-work').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.editWork(btn.dataset.id);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-work').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.deleteWork(btn.dataset.id);
+                    });
+                });
+                
+                document.querySelectorAll('.approve-work').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.approveWork(btn.dataset.id);
+                    });
+                });
+                
+                document.querySelectorAll('.reject-work').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.rejectWork(btn.dataset.id);
+                    });
+                });
+            }
+            
+            renderUsersManagement() {
+                const tableBody = document.getElementById('admin-users-table');
+                const users = this.dataManager.getUsers();
+                const currentUser = this.dataManager.getCurrentUser();
+                
+                tableBody.innerHTML = '';
+                
+                users.forEach(user => {
+                    // 不显示当前登录用户，避免误删
+                    if (user.id === currentUser.id) return;
+                    
+                    const userWorks = this.dataManager.getAllWorks().filter(work => work.authorId === user.id);
+                    
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.username} ${user.isAdmin ? '(管理员)' : ''}</td>
+                        <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+                        <td>${userWorks.length}</td>
+                        <td>正常</td>
+                        <td class="admin-actions">
+                            <button class="btn btn-outline toggle-admin" data-id="${user.id}" data-is-admin="${user.isAdmin}">
+                                ${user.isAdmin ? '取消管理员' : '设为管理员'}
+                            </button>
+                            <button class="btn btn-outline delete-user" data-id="${user.id}">删除</button>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                // 绑定操作事件
+                document.querySelectorAll('.toggle-admin').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.toggleAdmin(btn.dataset.id, btn.dataset.isAdmin === 'true');
+                    });
+                });
+                
+                document.querySelectorAll('.delete-user').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.deleteUser(btn.dataset.id);
+                    });
+                });
+            }
+            
+            renderReportsManagement() {
+                const tableBody = document.getElementById('admin-reports-table');
+                const reports = this.dataManager.getReports();
+                
+                tableBody.innerHTML = '';
+                
+                if (reports.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="6" style="text-align: center;">暂无举报</td>`;
+                    tableBody.appendChild(row);
+                    return;
+                }
+                
+                reports.forEach(report => {
+                    const work = this.dataManager.getWorkById(report.workId);
+                    if (!work) return; // 如果作品已被删除，跳过
+                    
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${report.id}</td>
+                        <td>${report.reason} - 作品: ${work.title}</td>
+                        <td>${this.getUsernameById(report.userId)}</td>
+                        <td>${new Date(report.createdAt).toLocaleDateString()}</td>
+                        <td>${report.status}</td>
+                        <td class="admin-actions">
+                            <button class="btn resolve-report" data-id="${report.id}">标记已处理</button>
+                            <button class="btn btn-outline view-work" data-id="${work.id}">查看作品</button>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                // 绑定操作事件
+                document.querySelectorAll('.resolve-report').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.resolveReport(btn.dataset.id);
+                    });
+                });
+                
+                document.querySelectorAll('.view-work').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.showWorkDetail(btn.dataset.id);
+                    });
+                });
+            }
+            
+            renderAnalytics() {
+                const analyticsContent = document.getElementById('analytics-content');
+                const users = this.dataManager.getUsers();
+                const works = this.dataManager.getAllWorks();
+                const approvedWorks = works.filter(work => work.status === 'approved');
+                const pendingWorks = works.filter(work => work.status === 'pending');
+                
+                analyticsContent.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div style="border: 1px solid var(--border-color); padding: 20px; text-align: center;">
+                            <h3>总用户数</h3>
+                            <p style="font-size: 24px; font-weight: bold;">${users.length}</p>
+                        </div>
+                        <div style="border: 1px solid var(--border-color); padding: 20px; text-align: center;">
+                            <h3>总作品数</h3>
+                            <p style="font-size: 24px; font-weight: bold;">${works.length}</p>
+                        </div>
+                        <div style="border: 1px solid var(--border-color); padding: 20px; text-align: center;">
+                            <h3>已审核作品</h3>
+                            <p style="font-size: 24px; font-weight: bold;">${approvedWorks.length}</p>
+                        </div>
+                        <div style="border: 1px solid var(--border-color); padding: 20px; text-align: center;">
+                            <h3>待审核作品</h3>
+                            <p style="font-size: 24px; font-weight: bold;">${pendingWorks.length}</p>
+                        </div>
+                    </div>
+                    <div style="border: 1px solid var(--border-color); padding: 20px;">
+                        <h3>最近上传的作品</h3>
+                        <ul style="margin-top: 15px;">
+                            ${approvedWorks.slice(-5).reverse().map(work => `
+                                <li style="margin-bottom: 10px;">
+                                    <strong>${work.title}</strong> - ${this.getUsernameById(work.authorId)} 
+                                    (${new Date(work.createdAt).toLocaleDateString()})
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            // 个人中心渲染方法
+            renderProfileInfo() {
+                const currentUser = this.dataManager.getCurrentUser();
+                if (!currentUser) return;
+                
+                // 基本信息
+                document.getElementById('profile-username').value = currentUser.username;
+                document.getElementById('profile-register-date').value = new Date(currentUser.createdAt).toLocaleString();
+                
+                // 作品数量
+                const userWorks = this.dataManager.getAllWorks().filter(work => work.authorId === currentUser.id);
+                document.getElementById('profile-works-count').value = userWorks.length;
+                
+                // 获赞总数
+                const likes = this.dataManager.getData(this.dataManager.likesKey);
+                let totalLikes = 0;
+                userWorks.forEach(work => {
+                    if (likes[work.id]) {
+                        totalLikes += likes[work.id].length;
+                    }
+                });
+                document.getElementById('profile-likes-count').value = totalLikes;
+                
+                // 渲染各个标签页内容
+                this.renderMyWorks();
+                this.renderMyLikes();
+                this.renderMyFavorites();
+            }
+            
+            renderMyWorks() {
+                const currentUser = this.dataManager.getCurrentUser();
+                if (!currentUser) return;
+                
+                const worksGrid = document.getElementById('my-works-grid');
+                const emptyWorks = document.getElementById('empty-my-works');
+                const userWorks = this.dataManager.getAllWorks().filter(work => work.authorId === currentUser.id);
+                
+                if (userWorks.length === 0) {
+                    worksGrid.style.display = 'none';
+                    emptyWorks.style.display = 'block';
+                    return;
+                }
+                
+                worksGrid.style.display = 'grid';
+                emptyWorks.style.display = 'none';
+                worksGrid.innerHTML = '';
+                
+                userWorks.forEach(work => {
+                    const workCard = this.createWorkCard(work, true);
+                    worksGrid.appendChild(workCard);
+                });
+            }
+            
+            renderMyLikes() {
+                const currentUser = this.dataManager.getCurrentUser();
+                if (!currentUser) return;
+                
+                const worksGrid = document.getElementById('my-likes-grid');
+                const emptyWorks = document.getElementById('empty-my-likes');
+                const likes = this.dataManager.getData(this.dataManager.likesKey);
+                const likedWorkIds = Object.keys(likes).filter(workId => 
+                    likes[workId].includes(currentUser.id)
+                );
+                
+                const likedWorks = likedWorkIds.map(workId => 
+                    this.dataManager.getWorkById(workId)
+                ).filter(work => work && work.status === 'approved');
+                
+                if (likedWorks.length === 0) {
+                    worksGrid.style.display = 'none';
+                    emptyWorks.style.display = 'block';
+                    return;
+                }
+                
+                worksGrid.style.display = 'grid';
+                emptyWorks.style.display = 'none';
+                worksGrid.innerHTML = '';
+                
+                likedWorks.forEach(work => {
+                    const workCard = this.createWorkCard(work, false);
+                    worksGrid.appendChild(workCard);
+                });
+            }
+            
+            renderMyFavorites() {
+                const currentUser = this.dataManager.getCurrentUser();
+                if (!currentUser) return;
+                
+                const worksGrid = document.getElementById('my-favorites-grid');
+                const emptyWorks = document.getElementById('empty-my-favorites');
+                const favorites = this.dataManager.getData(this.dataManager.favoritesKey);
+                const favoritedWorkIds = Object.keys(favorites).filter(workId => 
+                    favorites[workId].includes(currentUser.id)
+                );
+                
+                const favoritedWorks = favoritedWorkIds.map(workId => 
+                    this.dataManager.getWorkById(workId)
+                ).filter(work => work && work.status === 'approved');
+                
+                if (favoritedWorks.length === 0) {
+                    worksGrid.style.display = 'none';
+                    emptyWorks.style.display = 'block';
+                    return;
+                }
+                
+                worksGrid.style.display = 'grid';
+                emptyWorks.style.display = 'none';
+                worksGrid.innerHTML = '';
+                
+                favoritedWorks.forEach(work => {
+                    const workCard = this.createWorkCard(work, false);
+                    worksGrid.appendChild(workCard);
+                });
+            }
+            
+            createWorkCard(work, showActions = false) {
+                const workCard = document.createElement('div');
+                workCard.className = 'work-card';
+                workCard.addEventListener('click', () => {
+                    this.hideAllModals();
+                    this.showWorkDetail(work.id);
+                });
+                
+                const workImage = document.createElement('img');
+                workImage.className = 'work-image';
+                workImage.src = work.fileData;
+                workImage.alt = work.title;
+                
+                const workInfo = document.createElement('div');
+                workInfo.className = 'work-info';
+                
+                const workTitle = document.createElement('h3');
+                workTitle.className = 'work-title';
+                workTitle.textContent = work.title;
+                
+                const workMeta = document.createElement('div');
+                workMeta.className = 'work-meta';
+                workMeta.style.fontSize = '12px';
+                workMeta.style.color = 'var(--secondary-color)';
+                workMeta.style.marginTop = '5px';
+                
+                // 显示作品状态
+                if (work.status === 'pending') {
+                    workMeta.textContent = '审核中';
+                    workMeta.style.color = '#ff9800';
+                } else if (work.status === 'rejected') {
+                    workMeta.textContent = '审核未通过';
+                    workMeta.style.color = '#f44336';
+                } else {
+                    const likes = this.dataManager.getData(this.dataManager.likesKey)[work.id] || [];
+                    const favorites = this.dataManager.getData(this.dataManager.favoritesKey)[work.id] || [];
+                    workMeta.textContent = `❤️ ${likes.length} ⭐ ${favorites.length}`;
+                }
+                
+                workInfo.appendChild(workTitle);
+                workInfo.appendChild(workMeta);
+                
+                // 如果是我的作品，显示操作按钮
+                if (showActions) {
+                    const workActions = document.createElement('div');
+                    workActions.className = 'work-actions';
+                    workActions.style.marginTop = '10px';
+                    workActions.style.display = 'flex';
+                    workActions.style.gap = '5px';
+                    
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'btn btn-outline';
+                    editBtn.textContent = '编辑';
+                    editBtn.style.fontSize = '12px';
+                    editBtn.style.padding = '5px 10px';
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.editMyWork(work.id);
+                    });
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-outline';
+                    deleteBtn.textContent = '删除';
+                    deleteBtn.style.fontSize = '12px';
+                    deleteBtn.style.padding = '5px 10px';
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.deleteMyWork(work.id);
+                    });
+                    
+                    workActions.appendChild(editBtn);
+                    workActions.appendChild(deleteBtn);
+                    workInfo.appendChild(workActions);
+                }
+                
+                workCard.appendChild(workImage);
+                workCard.appendChild(workInfo);
+                
+                return workCard;
+            }
+            
+            // 事件处理方法
+            async handleLogin() {
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+                
+                const result = this.dataManager.authenticateUser(username, password);
+                
+                if (result.success) {
+                    alert('登录成功！');
+                    this.hideAllModals();
+                    this.checkLoginStatus();
+                    this.renderWorksList();
+                } else {
+                    alert(result.message);
+                }
+            }
+            
+            async handleRegister() {
+                const username = document.getElementById('register-username').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm').value;
+                
+                if (password !== confirmPassword) {
+                    alert('两次输入的密码不一致！');
+                    return;
+                }
+                
+                const result = this.dataManager.createUser(username, password);
+                
+                if (result.success) {
+                    alert('注册成功！请登录');
+                    this.hideAllModals();
+                    this.showLoginModal();
+                } else {
+                    alert(result.message);
+                }
+            }
+            
+            async handleUpload() {
+                const currentUser = this.dataManager.getCurrentUser();
+                if (!currentUser) {
+                    alert('请先登录！');
+                    this.hideAllModals();
+                    this.showLoginModal();
+                    return;
+                }
+                
+                const title = document.getElementById('work-title').value;
+                const description = document.getElementById('work-description').value;
+                const fileInput = document.getElementById('work-file');
+                
+                if (!fileInput.files[0]) {
+                    alert('请选择文件！');
+                    return;
+                }
+                
+                const result = await this.dataManager.createWork(
+                    title, 
+                    description, 
+                    fileInput.files[0], 
+                    currentUser.id
+                );
+                
+                if (result.success) {
+                    alert('上传成功！等待管理员审核');
+                    this.hideAllModals();
+                    this.renderWorksList();
+                    
+                    // 重置表单
+                    document.getElementById('upload-form').reset();
+                } else {
+                    alert('上传失败：' + result.message);
+                }
+            }
+            
+            handleLike() {
+                const currentUser = this.dataManager.getCurrentUser();
+                if (!currentUser) {
+                    alert('请先登录！');
+                    this.showLoginModal();
+                    return;
+                }
+                
+                const result = this.dataManager.toggleLike(this.currentWorkId, currentUser.id);
+                if (result.success) {
+                    this.updateInteractionCounts(this.currentWorkId);
+                }
+            }
+            
+            handleFavorite() {
+                const currentUser = this.dataManager.getCurrentUser();
+                if (!currentUser) {
+                    alert('请先登录！');
+                    this.showLoginModal();
+                    return;
+                }
+                
+                const result = this.dataManager.toggleFavorite(this.currentWorkId, currentUser.id);
+                if (result.success) {
+                    this.updateInteractionCounts(this.currentWorkId);
+                }
+            }
+            
+            handleComment() {
+                const currentUser = this.dataManager.getCurrentUser();
+                if (!currentUser) {
+                    alert('请先登录！');
+                    this.showLoginModal();
+                    return;
+                }
+                
+                const commentInput = document.getElementById('comment-input');
+                const content = commentInput.value.trim();
+                
+                if (!content) {
+                    alert('请输入评论内容！');
+                    return;
+                }
+                
+                const result = this.dataManager.addComment(this.currentWorkId, currentUser.id, content);
+                if (result.success) {
+                    commentInput.value = '';
+                    this.renderComments(this.currentWorkId);
+                } else {
+                    alert('评论失败：' + result.message);
+                }
+            }
+            
+            logout() {
+                this.dataManager.logout();
+                this.updateUIForGuest();
+                this.renderWorksList();
+                
+                if (this.currentView === 'admin-panel') {
+                    this.showWorksList();
+                }
+            }
+            
+            // 管理员操作方法
+            editWork(workId) {
+                const work = this.dataManager.getWorkById(workId);
+                if (!work) return;
+                
+                const newTitle = prompt('请输入新标题：', work.title);
+                if (newTitle === null) return;
+                
+                const newDescription = prompt('请输入新描述：', work.description);
+                if (newDescription === null) return;
+                
+                const result = this.dataManager.updateWork(workId, {
+                    title: newTitle,
+                    description: newDescription
+                });
+                
+                if (result.success) {
+                    alert('修改成功！');
+                    this.renderAdminPanel();
+                    
+                    // 如果当前正在查看这个作品，更新详情页
+                    if (this.currentView === 'work-detail' && this.currentWorkId === workId) {
+                        this.renderWorkDetail(workId);
+                    }
+                } else {
+                    alert('修改失败：' + result.message);
+                }
+            }
+            
+            deleteWork(workId) {
+                if (!confirm('确定要删除这个作品吗？此操作不可恢复！')) return;
+                
+                const result = this.dataManager.deleteWork(workId);
+                if (result.success) {
+                    alert('删除成功！');
+                    this.renderAdminPanel();
+                    this.renderWorksList();
+                    
+                    // 如果当前正在查看这个作品，返回作品列表
+                    if (this.currentView === 'work-detail' && this.currentWorkId === workId) {
+                        this.showWorksList();
+                    }
+                } else {
+                    alert('删除失败：' + result.message);
+                }
+            }
+            
+            approveWork(workId) {
+                const result = this.dataManager.updateWork(workId, { status: 'approved' });
+                if (result.success) {
+                    alert('审核通过！');
+                    this.renderAdminPanel();
+                    this.renderWorksList();
+                } else {
+                    alert('操作失败：' + result.message);
+                }
+            }
+            
+            rejectWork(workId) {
+                const result = this.dataManager.updateWork(workId, { status: 'rejected' });
+                if (result.success) {
+                    alert('已拒绝该作品！');
+                    this.renderAdminPanel();
+                } else {
+                    alert('操作失败：' + result.message);
+                }
+            }
+            
+            toggleAdmin(userId, isAdmin) {
+                const action = isAdmin ? '取消管理员权限' : '设为管理员';
+                if (!confirm(`确定要${action}吗？`)) return;
+                
+                const result = this.dataManager.updateUser(userId, { isAdmin: !isAdmin });
+                if (result.success) {
+                    alert('操作成功！');
+                    this.renderAdminPanel();
+                } else {
+                    alert('操作失败：' + result.message);
+                }
+            }
+            
+            deleteUser(userId) {
+                if (!confirm('确定要删除这个用户吗？此操作将同时删除该用户的所有作品！')) return;
+                
+                const result = this.dataManager.deleteUser(userId);
+                if (result.success) {
+                    alert('删除成功！');
+                    this.renderAdminPanel();
+                    this.renderWorksList();
+                } else {
+                    alert('删除失败：' + result.message);
+                }
+            }
+            
+            resolveReport(reportId) {
+                const result = this.dataManager.updateReport(reportId, { status: 'resolved' });
+                if (result.success) {
+                    alert('标记为已处理！');
+                    this.renderAdminPanel();
+                } else {
+                    alert('操作失败：' + result.message);
+                }
+            }
+            
+            switchAdminTab(tabName) {
+                // 更新标签状态
+                document.querySelectorAll('.admin-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`.admin-tab[data-tab="${tabName}"]`).classList.add('active');
+                
+                // 更新内容显示
+                document.querySelectorAll('.admin-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+            }
+            
+            // 个人中心操作方法
+            editMyWork(workId) {
+                const work = this.dataManager.getWorkById(workId);
+                if (!work) return;
+                
+                const newTitle = prompt('请输入新标题：', work.title);
+                if (newTitle === null) return;
+                
+                const newDescription = prompt('请输入新描述：', work.description);
+                if (newDescription === null) return;
+                
+                const result = this.dataManager.updateWork(workId, {
+                    title: newTitle,
+                    description: newDescription,
+                    status: 'pending' // 重新提交审核
+                });
+                
+                if (result.success) {
+                    alert('修改成功！作品将重新进入审核状态');
+                    this.renderMyWorks();
+                } else {
+                    alert('修改失败：' + result.message);
+                }
+            }
+            
+            deleteMyWork(workId) {
+                if (!confirm('确定要删除这个作品吗？此操作不可恢复！')) return;
+                
+                const result = this.dataManager.deleteWork(workId);
+                if (result.success) {
+                    alert('删除成功！');
+                    this.renderMyWorks();
+                    this.renderProfileInfo();
+                } else {
+                    alert('删除失败：' + result.message);
+                }
+            }
+            
+            handleChangePassword() {
+                const currentUser = this.dataManager.getCurrentUser();
+                if (!currentUser) {
+                    alert('请先登录！');
+                    this.hideAllModals();
+                    this.showLoginModal();
+                    return;
+                }
+                
+                const currentPassword = document.getElementById('current-password').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmNewPassword = document.getElementById('confirm-new-password').value;
+                
+                // 验证当前密码
+                if (currentPassword !== currentUser.password) {
+                    alert('当前密码错误！');
+                    return;
+                }
+                
+                // 验证新密码
+                if (newPassword !== confirmNewPassword) {
+                    alert('两次输入的新密码不一致！');
+                    return;
+                }
+                
+                // 更新密码
+                const result = this.dataManager.updateUser(currentUser.id, {
+                    password: newPassword
+                });
+                
+                if (result.success) {
+                    alert('密码修改成功！');
+                    this.hideAllModals();
+                    // 更新当前用户信息
+                    this.dataManager.setData(this.dataManager.currentUserKey, result.user);
+                } else {
+                    alert('密码修改失败：' + result.message);
+                }
+            }
+            
+            switchProfileTab(tabName) {
+                // 更新标签状态
+                document.querySelectorAll('#profile-modal .admin-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`#profile-modal .admin-tab[data-tab="${tabName}"]`).classList.add('active');
+                
+                // 更新内容显示
+                document.querySelectorAll('#profile-modal .admin-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                
+                // 刷新对应标签页内容
+                if (tabName === 'my-works') {
+                    this.renderMyWorks();
+                } else if (tabName === 'my-likes') {
+                    this.renderMyLikes();
+                } else if (tabName === 'my-favorites') {
+                    this.renderMyFavorites();
+                }
+            }
+            
+            // 辅助方法
+            getUsernameById(userId) {
+                const users = this.dataManager.getUsers();
+                const user = users.find(u => u.id === userId);
+                return user ? user.username : '未知用户';
+            }
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', () => {
+            window.app = new FourDayComicApp();
+        });
+    </script>
+</body>
+</html>
